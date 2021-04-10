@@ -3,8 +3,10 @@
 from selenium import webdriver
 import time
 import pandas as pd
-
+from random import random
 driver = webdriver.Chrome()
+
+
 
 #%% Get all the playlists
 URL = 'https://www.youtube.com/c/TaylorSwift/playlists?view=71&shelf_id=6'
@@ -50,24 +52,29 @@ for playlist in web_elem_list_playlists:
 df = pd.DataFrame(playlists)
 df.to_csv('data/youtubeplaylists_original.csv')
 
+
+
 #%% Get the edited playlists (some are not on spotify so can't get key, some are extended cuts)
 df = pd.read_csv('data/youtubeplaylists_edited.csv')
+df = df.sample(frac=1).reset_index(drop=True) # shuffle to run away from any errors
 output = []
 driver.implicitly_wait(3) # seconds
 
 urls = df['url']
 playlists = list(df['title'])
-
+youtubelink = 'https://www.youtube.com'
 allsongobjs = []
 for playlist_index, url in enumerate(urls):
     driver.get(url)
-    # time.sleep(2)
+    time.sleep(random())
     box = driver.find_element_by_tag_name('ytd-playlist-panel-renderer')
-    web_elem_list_songs = box.find_elements_by_id('video-title')
+    web_elem_list_songs = box.find_elements_by_id('playlist-items')
 
     for song_index, song in enumerate(web_elem_list_songs):
-        song_url = url+"&index="+str(song_index+1)
-        obj = {'songname': song.text, 'songurl':song_url, 'playlist':playlists[playlist_index]}
+        text = song.find_element_by_id('video-title').text
+        href = song.find_element_by_id('wc-endpoint').get_attribute("href")
+        song_url = href
+        obj = {'songname': text, 'songurl':song_url, 'playlist':playlists[playlist_index]}
         allsongobjs.append(obj)
 
 finalsongobjs = []
