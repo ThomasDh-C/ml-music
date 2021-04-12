@@ -10,3 +10,4 @@ An investigation into creating the ultimate Taylor Swift song using machine lear
 - pandas
 - selenium
 - beautiful soup (ended up not using this but found in investigations folder)
+- tqdm
