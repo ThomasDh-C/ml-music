@@ -63,7 +63,7 @@ for song_obj in song_lyrics_list:
 
 
 processed_song_df = pd.DataFrame(processed_song_list)
-
+processed_song_df.to_csv('temp/processed_song_df.csv')
 
 # %% --- Fix up the lyrics ------------------------------------------
 from nltk.corpus import stopwords
