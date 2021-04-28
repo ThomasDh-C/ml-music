@@ -136,10 +136,13 @@ display_topics(lda, tf_feature_names, no_top_words)
 
 
 
+
+
+
+
 # %% try gensim LDA model as has coherence
 # based on following (large edits needed):
 # https://towardsdatascience.com/evaluate-topic-model-in-python-latent-dirichlet-allocation-lda-7d57484bb5d0
-
 
 # %% Clean data
 # convert all to lower case and clean
@@ -211,7 +214,6 @@ nlp = spacy.load("en_core_web_sm", disable=['parser', 'ner'])
 
 # Do lemmatization keeping only noun, adj, vb, adv
 data_lemmatized = lemmatization(data_words_bigrams, allowed_postags=['NOUN', 'ADJ', 'VERB', 'ADV'])
-
 print(data_lemmatized[:1][0][:30])
 
 
@@ -219,24 +221,17 @@ import gensim.corpora as corpora
 
 # Create Dictionary
 id2word = corpora.Dictionary(data_lemmatized)
-
 # Create Corpus
 texts = data_lemmatized
-
 # Term Document Frequency
 corpus = [id2word.doc2bow(text) for text in texts]
-
 # View
 print(corpus[:1][0][:30])
 
 
 # Build LDA model
-lda_model = gensim.models.LdaMulticore(corpus=corpus,
-                                       id2word=id2word,
-                                       num_topics=10, 
-                                       random_state=100,
-                                       chunksize=100,
-                                       passes=10,
+lda_model = gensim.models.LdaMulticore(corpus=corpus, id2word=id2word, num_topics=10, 
+                                       random_state=100, chunksize=100, passes=10,
                                        per_word_topics=True)
 
 
@@ -252,14 +247,9 @@ print('Coherence Score: ', coherence_lda)
 # supporting function
 def compute_coherence_values(corpus, dictionary, k, a, b):
     
-    lda_model = gensim.models.LdaMulticore(corpus=corpus,
-                                           id2word=dictionary,
-                                           num_topics=k, 
-                                           random_state=100,
-                                           chunksize=100,
-                                           passes=10,
-                                           alpha=a,
-                                           eta=b)
+    lda_model = gensim.models.LdaMulticore(corpus=corpus, id2word=dictionary, num_topics=k, 
+                                           random_state=100, chunksize=100, passes=10,
+                                           alpha=a, eta=b)
     
     coherence_model_lda = CoherenceModel(model=lda_model, texts=data_lemmatized, dictionary=id2word, coherence='c_v')
     
@@ -267,67 +257,67 @@ def compute_coherence_values(corpus, dictionary, k, a, b):
 
 
 
-# %% Search around - taks 15mins
-import numpy as np
-import tqdm
+# %% Search around - takes 15mins
+# import numpy as np
+# import tqdm
 
-grid = {}
-grid['Validation_Set'] = {}
+# grid = {}
+# grid['Validation_Set'] = {}
 
-# Topics range
-min_topics = 2
-max_topics = 11
-step_size = 1
-topics_range = range(min_topics, max_topics, step_size)
+# # Topics range
+# min_topics = 2
+# max_topics = 11
+# step_size = 1
+# topics_range = range(min_topics, max_topics, step_size)
 
-# Alpha parameter
-alpha = list(np.arange(0.01, 1, 0.3))
-alpha.append('symmetric')
-alpha.append('asymmetric')
+# # Alpha parameter
+# alpha = list(np.arange(0.01, 1, 0.3))
+# alpha.append('symmetric')
+# alpha.append('asymmetric')
 
-# Beta parameter
-beta = list(np.arange(0.01, 1, 0.3))
-beta.append('symmetric')
+# # Beta parameter
+# beta = list(np.arange(0.01, 1, 0.3))
+# beta.append('symmetric')
 
-# Validation sets
-num_of_docs = len(corpus)
-corpus_sets = [gensim.utils.ClippedCorpus(corpus, int(num_of_docs*0.75)), 
-               corpus]
+# # Validation sets
+# num_of_docs = len(corpus)
+# corpus_sets = [gensim.utils.ClippedCorpus(corpus, int(num_of_docs*0.75)), 
+#                corpus]
 
-corpus_title = ['75% Corpus', '100% Corpus']
+# corpus_title = ['75% Corpus', '100% Corpus']
 
-model_results = {'Validation_Set': [],
-                 'Topics': [],
-                 'Alpha': [],
-                 'Beta': [],
-                 'Coherence': []
-                }
+# model_results = {'Validation_Set': [],
+#                  'Topics': [],
+#                  'Alpha': [],
+#                  'Beta': [],
+#                  'Coherence': []
+#                 }
 
-# Can take a long time to run
-if 1 == 1:
-    pbar = tqdm.tqdm(total=(len(beta)*len(alpha)*len(topics_range)*len(corpus_title)))
+# # Can take a long time to run
+# if 1 == 1:
+#     pbar = tqdm.tqdm(total=(len(beta)*len(alpha)*len(topics_range)*len(corpus_title)))
     
-    # iterate through validation corpuses
-    for i in range(len(corpus_sets)):
-        # iterate through number of topics
-        for k in topics_range:
-            # iterate through alpha values
-            for a in alpha:
-                # iterare through beta values
-                for b in beta:
-                    # get the coherence score for the given parameters
-                    cv = compute_coherence_values(corpus=corpus_sets[i], dictionary=id2word, 
-                                                  k=k, a=a, b=b)
-                    # Save the model results
-                    model_results['Validation_Set'].append(corpus_title[i])
-                    model_results['Topics'].append(k)
-                    model_results['Alpha'].append(a)
-                    model_results['Beta'].append(b)
-                    model_results['Coherence'].append(cv)
+#     # iterate through validation corpuses
+#     for i in range(len(corpus_sets)):
+#         # iterate through number of topics
+#         for k in topics_range:
+#             # iterate through alpha values
+#             for a in alpha:
+#                 # iterare through beta values
+#                 for b in beta:
+#                     # get the coherence score for the given parameters
+#                     cv = compute_coherence_values(corpus=corpus_sets[i], dictionary=id2word, 
+#                                                   k=k, a=a, b=b)
+#                     # Save the model results
+#                     model_results['Validation_Set'].append(corpus_title[i])
+#                     model_results['Topics'].append(k)
+#                     model_results['Alpha'].append(a)
+#                     model_results['Beta'].append(b)
+#                     model_results['Coherence'].append(cv)
                     
-                    pbar.update(1)
-    pd.DataFrame(model_results).to_csv('./results/lda_tuning_results.csv', index=False)
-    pbar.close()
+#                     pbar.update(1)
+#     pd.DataFrame(model_results).to_csv('./results/lda_tuning_results.csv', index=False)
+#     pbar.close()
 
 # %% 
 
@@ -344,12 +334,30 @@ lda_model = gensim.models.LdaMulticore(corpus=corpus,
                                         alpha=0.01,
                                         eta=0.91)
 
+rows = []
+for i in range(len(corpus)):
+    arr = lda_model[corpus[i]]
+
+    #calculate champ
+    tuple_champ = (0,0)
+    for categ_tuple in arr:
+        categ, prob = categ_tuple
+        if(prob>tuple_champ[1]): tuple_champ = categ_tuple
+    
+    rows.append({'categ': tuple_champ[0], 'p': tuple_champ[1]})
+
+df = pd.DataFrame(rows)
+df['song'] = processed_song_df['song']
+df.to_csv('temp/lda_categ_song.csv')
+
+
+
 
 
 
 
 # %%
-
+import os
 import pyLDAvis.gensim
 import pickle 
 import pyLDAvis

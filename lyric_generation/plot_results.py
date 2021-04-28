@@ -47,7 +47,7 @@ reduced_views_df = pd.DataFrame(max_views_per_song)
 
 
 # %% --- import lyrics ---------------------------------------------
-lyrics_df = pd.read_csv('temp/processed_song_df.csv', index_col=0)
+lyrics_df = pd.read_csv('temp/lda_categ_song.csv', index_col=0)
 # clean up song titles
 songname = lyrics_df['song']
 names = []
@@ -69,3 +69,5 @@ lyrics_df['fixed_songname'] = names
 # %% --- merge the two
 merged_dataset = lyrics_df.merge(reduced_views_df, on='fixed_songname', how='inner')
 
+merged_dataset.loc[:,['song', 'categ', 'views']]
+# %%
