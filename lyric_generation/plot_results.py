@@ -70,4 +70,9 @@ lyrics_df['fixed_songname'] = names
 merged_dataset = lyrics_df.merge(reduced_views_df, on='fixed_songname', how='inner')
 
 merged_dataset.loc[:,['song', 'categ', 'views']]
+
+
+# %%
+import matplotlib.pyplot as plt
+plt.scatter(merged_dataset['categ'], merged_dataset['views'])
 # %%
