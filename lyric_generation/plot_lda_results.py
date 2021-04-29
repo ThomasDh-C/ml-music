@@ -1,6 +1,6 @@
 import pandas as pd
 import re
-
+plt.style.use('ggplot')
 
 # %% --- import stats, string views --> int view count --------------
 views_df = pd.read_csv('../data_collection/data/song_stats.csv', index_col=0)
@@ -68,7 +68,6 @@ lyrics_df['fixed_songname'] = names
 
 # %% --- merge the two
 merged_dataset = lyrics_df.merge(reduced_views_df, on='fixed_songname', how='inner')
-
 merged_dataset.loc[:,['song', 'categ', 'views']]
 
 
