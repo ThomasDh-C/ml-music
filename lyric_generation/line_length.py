@@ -45,8 +45,8 @@ best_fit_line = stats.norm.pdf(x_axis, mu, sigma)*len(past_lengths)
 plt.hist(past_lengths, bins=bins)
 plt.plot(x_axis, best_fit_line)
 plt.show()
-print('Mu: ' + str(mu))
-print('Sigma: ' + str(sigma))
+print(f'Mu: {mu:.2f}')
+print(f'Sigma: {sigma:.2f}')
 
 
 print('Fit normal to number of lines per song')
@@ -60,8 +60,8 @@ best_fit_line = stats.norm.pdf(x_axis, mu, sigma)*len(past_song_lengths)*5
 plt.hist(past_song_lengths, bins=bins)
 plt.plot(x_axis, best_fit_line)
 plt.show()
-print('Mu: ' + str(mu))
-print('Sigma: ' + str(sigma))
+print(f'Mu: {mu:.2f}')
+print(f'Sigma: {sigma:.2f}')
 
 
 
