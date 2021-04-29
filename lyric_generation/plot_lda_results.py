@@ -1,5 +1,7 @@
 import pandas as pd
 import re
+import matplotlib.pyplot as plt
+
 plt.style.use('ggplot')
 
 # %% --- import stats, string views --> int view count --------------
@@ -74,4 +76,7 @@ merged_dataset.loc[:,['song', 'categ', 'views']]
 # %%
 import matplotlib.pyplot as plt
 plt.scatter(merged_dataset['categ'], merged_dataset['views'])
+plt.xlabel('topic')
+plt.ylabel('views on youtube')
+plt.show()
 # %%

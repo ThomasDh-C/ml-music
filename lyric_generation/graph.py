@@ -59,7 +59,7 @@ for word, next_words_dict in bigram_words_counts.items():
     for nextword in all_words:
         bigram_words_counts[word][nextword] = next_words_dict.get(nextword,0) + .3
 
-
+# apply prior
 
 
 # %% --- shortest path ---------------------

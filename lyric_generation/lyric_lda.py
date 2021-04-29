@@ -24,6 +24,8 @@ def sent_to_words(sentences):
         yield(gensim.utils.simple_preprocess(str(sentence), deacc=True))  # deacc=True removes punctuations
 
 data = processed_song_df['0'].tolist()
+data = [re.sub(r"endofparagraph", "", phrase) for phrase in data] # remove end of paragraph
+data = [re.sub(r"endofline", "", phrase) for phrase in data] # remove end of phrase
 data_words = list(sent_to_words(data)) # list of words, in list for each song
 
 
@@ -122,6 +124,8 @@ def compute_coherence_values(corpus, dictionary, k, a, b):
 import numpy as np
 import tqdm
 
+lda_tuning_results = pd.read_csv('./results/lda_tuning_results.csv')
+
 # grid = {}
 # grid['Validation_Set'] = {}
 
@@ -154,9 +158,9 @@ import tqdm
 #                  'Coherence': []
 #                 }
 
-lda_tuning_results = pd.read_csv('./results/lda_tuning_results.csv')
 
-# Can take a long time to run
+
+# # Can take a long time to run
 # if 1 == 1:
 #     pbar = tqdm.tqdm(total=(len(beta)*len(alpha)*len(topics_range)*len(corpus_title)))
     
@@ -192,7 +196,7 @@ plt.show()
 
 
 # %% --- Run champion model -----------------------------------------
-num_topics = 3
+num_topics = 7
 alpha = 0
 beta = .91
 
@@ -204,6 +208,9 @@ lda_model = gensim.models.LdaMulticore(corpus=corpus,
                                         passes=10,
                                         alpha=0.01,
                                         eta=0.91)
+
+# %% --- Save the champ data ---------------------------------------
+import json
 
 rows = []
 for i in range(len(corpus)):
@@ -222,12 +229,16 @@ df['song'] = original_df['song']
 df.to_csv('temp/lda_categ_song.csv')
 
 
+# winning_id was 1 (if start numbering at 1) ... for romantic like songs
+winning_id = 1
+json_ouptut = lda_model.show_topic(topicid=winning_id, topn=200)
+# stupdi conversion of datatypes
+json_ouptut = [(str(word), float(p)) for word, p in json_ouptut] 
+with open('./temp/lda_words_categ1.json', 'w') as outfile:
+    json.dump(json_ouptut, outfile)
 
 
-
-
-
-# %%
+# %% --- Visualize the topics ---------------------------------------
 import os
 import pyLDAvis.gensim
 import pickle 
@@ -236,19 +247,7 @@ import pyLDAvis
 # Visualize the topics
 pyLDAvis.enable_notebook()
 
-LDAvis_data_filepath = os.path.join('./results/ldavis_tuned_'+str(num_topics))
-
-# # this is a bit time consuming - make the if statement True
-# # if you want to execute visualization prep yourself
-if 1 == 1:
-    LDAvis_prepared = pyLDAvis.gensim.prepare(lda_model, corpus, id2word)
-    with open(LDAvis_data_filepath, 'wb') as f:
-        pickle.dump(LDAvis_prepared, f)
-
-# load the pre-prepared pyLDAvis data from disk
-with open(LDAvis_data_filepath, 'rb') as f:
-    LDAvis_prepared = pickle.load(f)
-
+LDAvis_prepared = pyLDAvis.gensim.prepare(lda_model, corpus, id2word)
 pyLDAvis.save_html(LDAvis_prepared, './results/ldavis_tuned_'+ str(num_topics) +'.html')
 
 LDAvis_prepared
