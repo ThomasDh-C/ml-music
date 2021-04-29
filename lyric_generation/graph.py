@@ -93,11 +93,14 @@ for word in all_words:
     G.add_edge('', node_key, length=1/orig_word_dict[word])
     if(weight<0): print(('', node_key)) # error checking
     
-
+no_out_connections = {'', 'endofline', 'endofparagraph'}
 # iterate through all the layers index 0->1->2->3->4->5-> (layer 6 is a closing layer)
 for i in tqdm(range(n_words-1)):
     # iterate through all left nodes
     for left_word in all_words:
+        # skip making out connections from these words
+        if(left_word in no_out_connections): continue
+
         orig_word_dict = bigram_words_counts.get(left_word)
         left_node_key = str(i) + "_" + left_word
         # iterate through all right nodes
@@ -105,6 +108,7 @@ for i in tqdm(range(n_words-1)):
             right_node_key = str(i+1) + "_" + right_word
             weight = 1/orig_word_dict[right_word]
             if(weight<0): print((left_node_key, right_node_key)) # error checking
+
             G.add_edge(left_node_key, right_node_key, length=weight)
         
 # layer 6 is a closing layer
@@ -115,11 +119,6 @@ for left_word in all_words:
     if(weight<0): print((left_node_key, 'endofline')) # error checking
     G.add_edge(left_node_key, 'endofline', length=weight)
 
-# remove erroneous nodes that we don't want in the middle of our sentence
-for i in range(n_words):
-    G.remove_node(str(i) + "_" + '')
-    G.remove_node(str(i) + "_" + 'endofline')
-    G.remove_node(str(i) + "_" + 'endofparagraph')
 print('graph made')
 
 
