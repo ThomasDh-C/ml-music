@@ -67,9 +67,13 @@ for word, next_words_dict in bigram_words_counts.items():
 # we have to get from start "" node to the 'endofline' in 7 moves
 # so make a network with:
 #  1 node layer ("") -> 2193 node word layer (repeat 7 layers for 7word) --> 1 node layer 'end of line'
+
+# switched from networkx (implemented in python) to graph-tool as 12.33s-->0.2s for shortest path (on google)
+# https://www.timlrx.com/blog/benchmark-of-popular-graph-network-packages
 import networkx as nx
 from tqdm import tqdm
 from itertools import islice
+
 
 n_words = 7
 
