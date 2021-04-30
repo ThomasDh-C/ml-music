@@ -217,9 +217,10 @@ def shortest_path(g):
 
 # %% --- iterate through all phrase lengths ---------------------------------------
 resultphrases = {}
-
+# print('This will create phrases of length: 4,6 ... 16 and take 3.5h')
+print('This will create phrases of length: 5,7 ... 17 and take 4h')
 # only do every other 2 to save time
-for n_words in range(4, 17, 2):
+for n_words in range(5, 18, 2):
     print('-----------------------------------')
     print('number of words: ' + str(n_words))
     print('-----------------------------------')
@@ -232,5 +233,5 @@ for n_words in range(4, 17, 2):
                                 'shortest_phrases': shortest_phrases}
     
     #write every loop in case program breaks at some point
-    with open('./temp/phrases_graph_model_ouput.json', 'w') as outfile:
+    with open('./temp/odd_phrases_graph_model_ouput.json', 'w') as outfile:
         json.dump(resultphrases, outfile)
