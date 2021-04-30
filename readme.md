@@ -11,3 +11,4 @@ An investigation into creating the ultimate Taylor Swift song using machine lear
 - selenium
 - beautiful soup (ended up not using this but found in investigations folder)
 - tqdm
+- python-igraph for graph model (implemented in C++ so a lot faster than networkX)
