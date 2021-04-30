@@ -86,57 +86,65 @@ from itertools import islice
 from igraph import *
 from math import log
 
-n_words = 7
-# edge_tuple_list used to create graph is 
-# a array of tuples ie [('node1', 'node2', float_weight), ...]
-edge_tuple_list = []
 
-# add weights as weight = 1/freq 
-# layersource to layer0
-no_out_connections = {'', 'endofline', 'endofparagraph','dofline'}
-orig_word_dict = bigram_words_counts.get('')
-for word in all_words:
-    # don't want our random to walk to end in a endofline early
-    if(word in no_out_connections): continue
 
-    node_key = "0_" + word
-    # weight = log(1/orig_word_dict[word])+ 10
-    weight = 1/orig_word_dict[word]
-    edge_tuple = ('', node_key, weight)
-    edge_tuple_list.append(edge_tuple)
-    
-# iterate through all the layers index 0->1->2->3->4->5-> (layer 6 is a closing layer)
-for i in tqdm(range(n_words-1)):
-    # iterate through all left nodes
+def create_g(n_words):
+    # edge_tuple_list used to create graph is 
+    # a array of tuples ie [('node1', 'node2', float_weight), ...]
+    edge_tuple_list = []
+
+    # add weights as weight = 1/freq 
+    # layersource to layer0
+    no_out_connections = {'', 'endofline', 'endofparagraph','dofline'}
+    orig_word_dict = bigram_words_counts.get('')
+    for word in all_words:
+        # don't want our random to walk to end in a endofline early
+        if(word in no_out_connections): continue
+
+        node_key = "0_" + word
+        # weight = log(1/orig_word_dict[word])+ 10
+        weight = 1/orig_word_dict[word]
+        edge_tuple = ('', node_key, weight)
+        edge_tuple_list.append(edge_tuple)
+        
+    # iterate through all the layers index 0->1->2->3->4->5-> (layer 6 is a closing layer)
+    for i in tqdm(range(n_words-1), desc='Creating word vectors'):
+        # iterate through all left nodes
+        for left_word in all_words:
+            # skip making out connections from these words
+            if(left_word in no_out_connections): continue
+
+            orig_word_dict = bigram_words_counts.get(left_word)
+            left_node_key = str(i) + "_" + left_word
+            # iterate through all right nodes
+            for right_word in all_words:
+                if(right_word in no_out_connections): continue
+                right_node_key = str(i+1) + "_" + right_word
+                # weight = log(1/orig_word_dict[right_word]) + 10
+                weight = 1/orig_word_dict[right_word]
+                edge_tuple = (left_node_key, right_node_key, weight)
+                edge_tuple_list.append(edge_tuple)
+            
+    # layer 6 is a closing layer
     for left_word in all_words:
-        # skip making out connections from these words
         if(left_word in no_out_connections): continue
 
         orig_word_dict = bigram_words_counts.get(left_word)
-        left_node_key = str(i) + "_" + left_word
-        # iterate through all right nodes
-        for right_word in all_words:
-            if(right_word in no_out_connections): continue
-            right_node_key = str(i+1) + "_" + right_word
-            # weight = log(1/orig_word_dict[right_word]) + 10
-            weight = 1/orig_word_dict[right_word]
-            edge_tuple = (left_node_key, right_node_key, weight)
-            edge_tuple_list.append(edge_tuple)
-        
-# layer 6 is a closing layer
-for left_word in all_words:
-    if(left_word in no_out_connections): continue
+        left_node_key = str(n_words-1) + "_" + left_word
+        # weight = log(1/orig_word_dict['endofline'])+ 10
+        weight = 1/orig_word_dict['endofline']
+        edge_tuple = (left_node_key, 'endofline', weight)
+        edge_tuple_list.append(edge_tuple)
 
-    orig_word_dict = bigram_words_counts.get(left_word)
-    left_node_key = str(n_words-1) + "_" + left_word
-    # weight = log(1/orig_word_dict['endofline'])+ 10
-    weight = 1/orig_word_dict['endofline']
-    edge_tuple = (left_node_key, 'endofline', weight)
-    edge_tuple_list.append(edge_tuple)
+    print('Graph conversion occuring')
+    g = Graph.TupleList(edge_tuple_list, weights=True, directed=True)
+    print('Graph made for' +str(n_words) + ' words')
 
-print('Graph conversion occuring')
-g = Graph.TupleList(edge_tuple_list, weights=True, directed=True)
-print('Graph made')
+    return g
+
+n_words = 7
+# g = create_g(n_words)
+
 
 # %% --- shortest random walks --------------------------------------
 from pqdict import pqdict
@@ -144,15 +152,14 @@ from pqdict import pqdict
 def get_weight(g, path):
     weight = 1
     for i in range(len(path)-1):
-        # edge_weight = g[path[i], path[i+1]]
-        edge_weight = g.es[g.get_eid(path[i], path[i+1], error=False)]['weight']
-        weight = weight*edge_weight
+        # all on one line to increase speed
+        weight = weight*g.es[g.get_eid(path[i], path[i+1], error=False)]['weight']
     return weight
 
-def get_string(g, path):
+def get_string(g, path, all_node_names):
     string_arr = []
     for path_member in path:
-        key = g.vs['name'][path_member]
+        key = all_node_names[path_member]
         word = key[2:]
         word = re.sub(r"\u2005", " ", word) #forgot to take these out first
         word = re.sub(r"\u205f", " ", word) #forgot to take these out first
@@ -163,34 +170,67 @@ def get_string(g, path):
     path_string = " ".join(string_arr)
     return path_string
 
-print('Trying a bunch of random paths:')
-minpq_dict = {}
-all_paths= []
-for i in tqdm(range(500000)):
-    path = g.random_walk('',n_words+1, mode='out', stuck='return')
-    weight = get_weight(g, path)
-    all_paths.append(path)
-    minpq_dict[i] = weight
-minpq = pqdict(minpq_dict)
-top_path_ids = list(minpq.popkeys())[:10]
-top_strings = [get_string(g, all_paths[index]) for index in top_path_ids]
-print('Best random walk paths:')
-print(top_strings)
+def random_paths(g):
+    # print('Trying a bunch of random paths:')
+    minpq_dict = {}
+    all_paths= []
+    for i in tqdm(range(500000), desc='Random paths'):
+        path = g.random_walk('',n_words+1, mode='out', stuck='return')
+        weight = get_weight(g, path)
+        all_paths.append(path)
+        minpq_dict[i] = weight
+    minpq = pqdict(minpq_dict)
+    top_path_ids = list(minpq.popkeys())[:100]
+    all_node_names = g.vs['name']
+    top_strings = [get_string(g, all_paths[index], all_node_names) for index in top_path_ids]
+    # print('Best random walk paths:')
+    # print(top_strings[:5])
 
-# %% --- copying is super fast so let's see how fast dropping nodes is ---------------------------------------------------------
+    return top_strings
+# random_paths(g)
+# %% --- Shortest path method ---------------------------------------
 import random
 
-d = g.copy()
-for i in range(n_words):
-    begining = str(i)+'_'
-    nodes_in_col = [v.index for v in d.vs if v['name'][:2]==begining]
-    # https://www.geeksforgeeks.org/randomly-select-n-elements-from-list-in-python/
-    count_dropping = int(0.01*len(nodes_in_col))
-    nodes_to_drop = random.sample(nodes_in_col, count_dropping)
-    d.delete_vertices(nodes_to_drop)
-path = d.get_shortest_paths('', to='endofline', weights='weight', mode='out', output='vpath')[0]
+# takes 5mins to run
+def shortest_path(g):
+    top_strings = []
+    for _ in tqdm(range(40), desc='Shortest path'):
+        d = g.copy()
+        for i in range(n_words):
+            begining = str(i)+'_'
+            nodes_in_col = [v.index for v in d.vs if v['name'][:2]==begining]
+            # https://www.geeksforgeeks.org/randomly-select-n-elements-from-list-in-python/
+            count_dropping = int(0.8*len(nodes_in_col))
+            nodes_to_drop = random.sample(nodes_in_col, count_dropping)
+            d.delete_vertices(nodes_to_drop)
+        path = d.get_shortest_paths('', to='endofline', weights='weight', mode='out', output='vpath')[0]
+        all_node_names = d.vs['name']
+        path_string = get_string(g, path[:-1], all_node_names)
+        # print(path_string)
+        top_strings.append(path_string)
+    
+    return top_strings
 
-path_string = get_string(g, path)
-print(path_string)
+
+# shortest_path(g)
 
 
+# %% --- iterate through all phrase lengths ---------------------------------------
+resultphrases = {}
+
+# only do every other 2 to save time
+for n_words in range(4, 17, 2):
+    print('-----------------------------------')
+    print('number of words: ' + str(n_words))
+    print('-----------------------------------')
+    
+    g = create_g(n_words)
+    random_phrases = random_paths(g)
+    shortest_phrases = shortest_path(g)
+
+    resultphrases[n_words] = {'random_phrases': random_phrases, 
+                                'shortest_phrases': shortest_phrases}
+    
+    #write every loop in case program breaks at some point
+    with open('./temp/phrases_graph_model_ouput.json', 'w') as outfile:
+        json.dump(resultphrases, outfile)
