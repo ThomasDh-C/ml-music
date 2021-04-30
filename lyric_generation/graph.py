@@ -62,7 +62,7 @@ for word, next_words_dict in bigram_words_counts.items():
 # apply prior
 
 
-# %% --- shortest path ---------------------
+# %% --- construct graph --------------------------------------------
 # say we want a sentence of 7 words
 # we have to get from start "" node to the 'endofline' in 7 moves
 # so make a network with:
@@ -70,34 +70,31 @@ for word, next_words_dict in bigram_words_counts.items():
 
 # switched from networkx (implemented in python) to graph-tool as 12.33s-->0.2s for shortest path (on google)
 # https://www.timlrx.com/blog/benchmark-of-popular-graph-network-packages
-import networkx as nx
+
 from tqdm import tqdm
 from itertools import islice
-
+from igraph import *
+from math import log
 
 n_words = 7
+# edge_tuple_list used to create graph is 
+# a array of tuples ie [('node1', 'node2', float_weight), ...]
+edge_tuple_list = []
 
-G = nx.DiGraph()
-
-# add nodes
-layersource = ['']
-inbetweenlayers = []
-for i in range(n_words):
-    words = [str(i)+"_" + word for word in all_words]
-    inbetweenlayers = inbetweenlayers + words
-finallayer = ['endofline']
-G.add_nodes_from(layersource+inbetweenlayers+finallayer)
-
-# add weights as weight = 1/freq (find shortest path with non-neg weights)
+# add weights as weight = 1/freq 
 # layersource to layer0
+no_out_connections = {'', 'endofline', 'endofparagraph','dofline'}
 orig_word_dict = bigram_words_counts.get('')
 for word in all_words:
+    # don't want our random to walk to end in a endofline early
+    if(word in no_out_connections): continue
+
     node_key = "0_" + word
-    weight = 1/orig_word_dict[word]
-    G.add_edge('', node_key, length=1/orig_word_dict[word])
-    if(weight<0): print(('', node_key)) # error checking
+    weight = log(1/orig_word_dict[word])+ 10
     
-no_out_connections = {'', 'endofline', 'endofparagraph'}
+    edge_tuple = ('', node_key, weight)
+    edge_tuple_list.append(edge_tuple)
+    
 # iterate through all the layers index 0->1->2->3->4->5-> (layer 6 is a closing layer)
 for i in tqdm(range(n_words-1)):
     # iterate through all left nodes
@@ -109,49 +106,78 @@ for i in tqdm(range(n_words-1)):
         left_node_key = str(i) + "_" + left_word
         # iterate through all right nodes
         for right_word in all_words:
+            if(right_word in no_out_connections): continue
             right_node_key = str(i+1) + "_" + right_word
-            weight = 1/orig_word_dict[right_word]
-            if(weight<0): print((left_node_key, right_node_key)) # error checking
-
-            G.add_edge(left_node_key, right_node_key, length=weight)
+            weight = log(1/orig_word_dict[right_word]) + 10
+            
+            edge_tuple = (left_node_key, right_node_key, weight)
+            edge_tuple_list.append(edge_tuple)
         
 # layer 6 is a closing layer
 for left_word in all_words:
+    if(left_word in no_out_connections): continue
+
     orig_word_dict = bigram_words_counts.get(left_word)
     left_node_key = str(n_words-1) + "_" + left_word
-    weight = 1/orig_word_dict['endofline']
-    if(weight<0): print((left_node_key, 'endofline')) # error checking
-    G.add_edge(left_node_key, 'endofline', length=weight)
+    weight = log(1/orig_word_dict['endofline'])+ 10
 
-print('graph made')
+    edge_tuple = (left_node_key, 'endofline', weight)
+    edge_tuple_list.append(edge_tuple)
+
+print('Graph conversion occuring')
+g = Graph.TupleList(edge_tuple_list, weights=True, directed=True)
+print('Graph made')
+
+# %% --- shortest random walks --------------------------------------
+from pqdict import pqdict
+
+def get_weight(g, path):
+    weight = 1
+    for i in range(len(path)-1):
+        edge_weight = g[path[i], path[i+1]]
+        weight = weight*edge_weight
+    return weight
+
+def get_string(g, path):
+    string_arr = []
+    for path_member in path:
+        key = g.vs['name'][path_member]
+        word = key[2:]
+        word = re.sub(r"\u2005", " ", word) #forgot to take these out first
+        if(key!=''): 
+            string_arr =string_arr + [word]
+    string_arr[0] = string_arr[0].capitalize()
+
+    path_string = " ".join(string_arr)
+    return path_string
+
+print('Trying a bunch of random paths:')
+minpq_dict = {}
+all_paths= []
+for i in tqdm(range(500000)):
+    path = g.random_walk('',n_words+1, mode='out', stuck='return')
+    weight = get_weight(g, path)
+    all_paths.append(path)
+    minpq_dict[i] = weight
+minpq = pqdict(minpq_dict)
+top_path_ids = list(minpq.popkeys())[:10]
+top_strings = [get_string(g, all_paths[index]) for index in top_path_ids]
+print('Best paths:')
+print(top_strings)
+
+# %% --- copying is super fast so let's see how fast dropping nodes is ---------------------------------------------------------
+import random
+
+d = g.copy()
+for i in range(n_words):
+    begining = str(i)+'_'
+    nodes_in_col = [v.index for v in d.vs if v['name'][:2]==begining]
+    # https://www.geeksforgeeks.org/randomly-select-n-elements-from-list-in-python/
+    count_dropping = int(0.05*len(nodes_in_col))
+    nodes_to_drop = random.sample(nodes_in_col, count_dropping)
+    d.delete_vertices(nodes_to_drop)
+path = d.get_shortest_paths('', to='endofline', weights='weight', mode='out', output='vpath')[0]
+get_string(g, path)
 
 
-# https://networkx.org/documentation/networkx-1.10/reference/generated/networkx.algorithms.simple_paths.shortest_simple_paths.html
-def k_shortest_paths(G, source, target, k, weight=None):
-    return list(islice(nx.shortest_simple_paths(G, source, target, weight=weight), k))
 
-print('working on sentences')
-for path in k_shortest_paths(G, source='', target='endofline', k=10, weight="length"):
-    # path is an array of nodes passes through --> convert to sentence
-    path = path[1:][:-1]
-    out_arr = [element[2:] for element in path]
-    out_arr[0] = out_arr[0].capitalize()
-    print(" ".join(out_arr))
-
-# currently prints
-# I do not you know that you
-# I do not know i want you
-# I do not know i knew you
-# I do not you do not you
-# I do not know i would you
-# I know that i do not you
-# I can not you know that you
-# I do not you are not you
-# I can not know i want you
-# I can not know i knew you
-
-# %% --- Next steps ---------------------------------------------------------
-# https://stackoverflow.com/questions/34909588/how-to-remove-random-number-of-nodes-from-a-network-graph
-# remove random nodes and get the best sentences
-# choose the best one of the top 10 for reasoning (somehow do coherence magic?)
-# generate tons of lines with this ... or maybe lines for chorus, lines for whatever etc
