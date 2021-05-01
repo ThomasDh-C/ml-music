@@ -233,5 +233,6 @@ for n_words in range(5, 18, 2):
                                 'shortest_phrases': shortest_phrases}
     
     #write every loop in case program breaks at some point
-    with open('./temp/odd_phrases_graph_model_ouput.json', 'w') as outfile:
+    #use a 1 so don't accidentally overwrite current
+    with open('./temp/odd_phrases_graph_model_ouput1.json', 'w') as outfile:
         json.dump(resultphrases, outfile)

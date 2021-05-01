@@ -2,7 +2,9 @@
 import json
 
 json_file = open('./temp/phrases_graph_model_ouput.json')
-phrase_model = json.load(json_file)
+phrase_model_even = json.load(json_file)
+json_file = open('./temp/odd_phrases_graph_model_ouput.json')
+phrase_model_odd = json.load(json_file)
 
 # %% --- generate song --------------------------------------
 import numpy as np
@@ -26,8 +28,8 @@ random_walk_song = []
 shortest_path_song = []
 for line_length in line_lengths:
     line_length = str(line_length)
-    random_phrase_list = phrase_model[line_length]['random_phrases']
-    shortest_phrase_list = phrase_model[line_length]['shortest_phrases']
+    random_phrase_list = phrase_model_even[line_length]['random_phrases']
+    shortest_phrase_list = phrase_model_even[line_length]['shortest_phrases']
 
     length_random_phrase = len(random_phrase_list)
     random_phrase_index = np.random.randint(0,length_random_phrase)
