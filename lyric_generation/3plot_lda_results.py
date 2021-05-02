@@ -70,7 +70,7 @@ lyrics_df['fixed_songname'] = names
 
 # %% --- merge the two
 merged_dataset = lyrics_df.merge(reduced_views_df, on='fixed_songname', how='inner')
-merged_dataset.loc[:,['song', 'categ', 'views']]
+merged_dataset.loc[:,['song', 'categ', 'views']].to_csv('results/merged_song_views.csv')
 
 
 # %%

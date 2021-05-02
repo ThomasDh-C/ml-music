@@ -75,3 +75,54 @@ I mean swear car taught bleed
 We line late frozen ground terrified difficult follow
 Counting and i she servе first wedding dorm
 It was forgets ripped accidents muffled spotlight doing reaching shoulders
+
+----------
+
+GPT3 song: based on taylor swift's version of love story and change (top2 in categ1)
+i prompted as follows with gpt having to continue after 3.
+FACTORS: temp = 0.9, top_p=1, frequency_penalty = 0.2, presence_penalty = 0.82, best_of = 1, model = ada (fastest and most creative and cheapest)
+PROMPT: 'Write Love songs
+
+1.
+We were both young when I first saw you
+I close my eyes and th .....
+'Cause we were both young when I first saw you
+####
+2.
+Well, it's a sad picture, the final blow hits you
+Somebod...
+Hallelujah
+####
+3.'
+
+GPT 3 made:
+She was born to be a star; it's a word whispered in your ear
+To put days of starvation, fear and death behind us
+What we lost, what we lost, something so much more important than anything else in the world
+Sometimes we stay down and plop our sugar into our wounds until the pain is unbearable
+I don't know where you've been lately
+Why won't you come home? I miss you so much
+And I don't know how I can let him go
+Please come back here. Help me to hold him back
+Because there's something wrong... oh, oh, oh, oh
+Too many people tore me apart and ripped them apart
+I want to rediscover the way back home
+Help the kids, I'll be home soon
+Oh, oh, oh, oh
+And now suddenly everything is clearing up again
+Let's go on. Let's go on, we'll fight our way through this night
+Okay girls, let's get this started!
+Just say the word... oh, oh, oh, oh
+(Repeat chorus)
+If you can't accept the truth of what is right and wrong, leave it alone
+Stay with my logic and try and fall in love again
+You're not going away, this is not the end
+we don't have to give up our dreams
+Oh oh oh oh oh oh ahahhahahaahahaahahaha
+We'll never stop fighting until we win this war
+Oh, once the war's done we'll get home... We'll come back every where possible
+And when the time takes its toll, I promise it will be worth it (Repeat chorus)
+If you can't accept the truth of what is right and wrong, leave it alone
+Just say the word... oohh alright so here's another thought i think love always wins
+So I say... get your girls drunk
+The game will be on cuz' if you don't beat them somehow there won't be another day like today left alive
