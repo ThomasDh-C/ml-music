@@ -2,3 +2,4 @@
 vscode/
 .env
 investigations/chords_midi
+data_analysis/env
