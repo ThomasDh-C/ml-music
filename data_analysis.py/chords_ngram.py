@@ -1,6 +1,7 @@
 # %% Import json file
 import json
 import nltk
+nltk.download()
 from nltk import word_tokenize
 from nltk.util import ngrams
 
