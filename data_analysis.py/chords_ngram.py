@@ -1,9 +1,10 @@
 # %% Import json file
 import json
 import nltk
-nltk.download()
+# nltk.download()
 from nltk import word_tokenize
 from nltk.util import ngrams
+import numpy as np
 
 json_file = open('../data_collection/data/chords.json')
 pages_to_search = json.load(json_file)
@@ -46,6 +47,8 @@ unknown_dict = {word: .3 for word in all_words}
 
 # %% --- run ngram model
 from copy import deepcopy
+import re
+
 prev_word_arr = [''] * n
 prev_word = " ".join(prev_word_arr)
 words = []
