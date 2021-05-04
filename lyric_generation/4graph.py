@@ -1,8 +1,6 @@
-from numpy.core.numeric import NaN
 import pandas as pd
 import contractions
 import re
-import numpy as np
 import json
 
 processed_song_df = pd.read_csv('temp/processed_song_df.csv')
@@ -82,9 +80,7 @@ for word, next_words_dict in bigram_words_counts.items():
 # https://www.timlrx.com/blog/benchmark-of-popular-graph-network-packages
 
 from tqdm import tqdm
-from itertools import islice
 from igraph import *
-from math import log
 
 
 

@@ -1,0 +1,9 @@
+
+
+cd lyric_generation
+python3 1ngram.py
+python3 2lyric_lda.py
+python3 3plot_lda_results.py
+python3 4graph.py
+python3 5line_length.py
+python3 6make_songs.py

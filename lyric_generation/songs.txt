@@ -1,0 +1,128 @@
+Random walk song:
+
+Sunday flannel in my middleclass falls
+My heart dark dollars
+Time to see pieces want wheels assume you lonelinеss
+You all standin' i loved
+Prettiest in a flashback disbelief sashay coast took her traveled wheels burned off city
+Signal sixteen with the a bad terrified marching same glance
+Vintage watching rose longest temptation daddy staring out flashing court lifetime streak poets everyone
+I wait myself dagger messy obsessed
+My heart dark dollars
+My hand grocery calls
+It even eye accidents scorpion secret fifty haunt
+Persist and there tea said blue but shop waited pirates magnetic
+4 pool barren cure and you
+Gray drivin' trace behind today try try stephen
+I paid started in get iron worse silence lost in
+January outdoor crestfallen wool moments get into a
+Our love inside sharks soon happens
+I acted hanging 2 hell adore
+Have respects tea this final separated sir you are pérignon
+You forget all's god relief calls
+But it looking wise
+We line architect windows all dim doc sneakers
+Turns easy bleed meetings street lights told me must sipped
+Say scared bold wooden still has
+Dog tweet town sense of hand acid gather vision jeans
+The curve use brand
+You tell perfеct ohohohoh sick fake
+I hug honey windows crowds trapeze
+Small to word she went somehow
+Gowns know that paint next yogurt
+Burrowеd because i smoke porch beating hard fever
+You tell perfеct ohohohoh sick fake
+You heard mess crazy do first wise weapons
+Fits where i fall as exactly stayed darlin'
+Back will be daughter chances dalí answer used to think angel heartbreak
+
+-------------------
+
+Shortest path song:
+
+I wait myself dagger messy obsessed
+What i tight show
+Twice sweet tea avenue six happy know i still
+Classmates what you will
+Prettiest in a flashback disbelief sashay coast took her traveled wheels burned off city
+Tuesday choose eyes would you go pools filling swam pain
+Peaceful taking want hand politе life fighting over hoax gave you there throw ago
+The one ready such we mmm
+I break outta footprints
+Each i know throwing
+I swore cross do gather tasteful friends you nowhere
+Signal sixteen with the a bad terrified marching same glance
+Repeating write miss you made socalled
+You loved back forgiveness fury swear coming jump
+You loved back forgiveness fury swear coming jump
+Whatifs if i walk name whisper sweep beside
+Small to word she went somehow
+I got lovely the landing indigo locked
+Thigh winless mouse you feel nothing glistеn perched glimpse bar
+I see ship sequin throwing gone
+I wake thirteen politе
+The bus have is hard backlogged million stephen part
+I want days battle i'vе calls dream lyrical make about
+What a rocks architect mistakes midnight
+You and 1] stars closer ship been deep january whatever
+I run ended haze
+Make weapons teal enough i feel
+I follow parkеd highest hunters pretty
+I got lovely the landing indigo locked
+Make weapons teal enough i feel
+I get won knelt trust seventeen circus pride
+I mean swear car taught bleed
+We line late frozen ground terrified difficult follow
+Counting and i she servе first wedding dorm
+It was forgets ripped accidents muffled spotlight doing reaching shoulders
+
+----------
+
+GPT3 song: based on taylor swift's version of love story and change (top2 in categ1)
+i prompted as follows with gpt having to continue after 3.
+FACTORS: temp = 0.9, top_p=1, frequency_penalty = 0.2, presence_penalty = 0.82, best_of = 1, model = ada (fastest and most creative and cheapest)
+PROMPT: 'Write Love songs
+
+1.
+We were both young when I first saw you
+I close my eyes and th .....
+'Cause we were both young when I first saw you
+####
+2.
+Well, it's a sad picture, the final blow hits you
+Somebod...
+Hallelujah
+####
+3.'
+
+GPT 3 made:
+She was born to be a star; it's a word whispered in your ear
+To put days of starvation, fear and death behind us
+What we lost, what we lost, something so much more important than anything else in the world
+Sometimes we stay down and plop our sugar into our wounds until the pain is unbearable
+I don't know where you've been lately
+Why won't you come home? I miss you so much
+And I don't know how I can let him go
+Please come back here. Help me to hold him back
+Because there's something wrong... oh, oh, oh, oh
+Too many people tore me apart and ripped them apart
+I want to rediscover the way back home
+Help the kids, I'll be home soon
+Oh, oh, oh, oh
+And now suddenly everything is clearing up again
+Let's go on. Let's go on, we'll fight our way through this night
+Okay girls, let's get this started!
+Just say the word... oh, oh, oh, oh
+(Repeat chorus)
+If you can't accept the truth of what is right and wrong, leave it alone
+Stay with my logic and try and fall in love again
+You're not going away, this is not the end
+we don't have to give up our dreams
+Oh oh oh oh oh oh ahahhahahaahahaahahaha
+We'll never stop fighting until we win this war
+Oh, once the war's done we'll get home... We'll come back every where possible
+And when the time takes its toll, I promise it will be worth it (Repeat chorus)
+If you can't accept the truth of what is right and wrong, leave it alone
+Just say the word... oohh alright so here's another thought i think love always wins
+So I say... get your girls drunk
+The game will be on cuz' if you don't beat them somehow there won't be another day like today left alive
