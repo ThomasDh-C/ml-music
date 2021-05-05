@@ -6,14 +6,18 @@ from nltk import word_tokenize
 from nltk.util import ngrams
 import numpy as np
 
+note_arr = ["A", "B", "C", "D", "E", "F", "G", "A", "B", "C", "D", "E", "F", "G"]
+
 json_file = open('../data_collection/data/chords.json')
 pages_to_search = json.load(json_file)
 
 new_lyrics = []
 all_chords = {}
 for page in pages_to_search:
+    
     for chord_obj in page['chords']:
         stripped = chord_obj['chord'].split('-')
+
         new_lyrics.append(stripped[1])
 
 # Thomas's trigram implementation
