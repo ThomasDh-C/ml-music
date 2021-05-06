@@ -20,6 +20,8 @@ for song in new_lyrics:
     song_length = 0
 # %% --- plot line lengths ------------------------------------------
 import matplotlib.pyplot as plt
+plt.style.use('ggplot')
+
 print('Number of tokens per line')
 bins=18
 plt.hist(past_lengths, bins=bins)
@@ -41,12 +43,15 @@ x_axis = np.arange(0, 20, 0.01)
 
 mu, sigma = stats.norm.fit(past_lengths)
 best_fit_line = stats.norm.pdf(x_axis, mu, sigma)*len(past_lengths)
-
 plt.hist(past_lengths, bins=bins)
 plt.plot(x_axis, best_fit_line)
+plt.xlabel('Tokens per line')
+plt.ylabel('Counts')
+plt.savefig('../imgs/tokens_per_line.pdf')
 plt.show()
 print(f'Mu: {mu:.2f}')
 print(f'Sigma: {sigma:.2f}')
+
 
 
 print('Fit normal to number of lines per song')
@@ -56,9 +61,11 @@ x_axis = np.arange(10, 65, 0.01)
 mu, sigma = stats.norm.fit(past_song_lengths)
 # add in a fudge factor of 5 for graphing to make it pretty
 best_fit_line = stats.norm.pdf(x_axis, mu, sigma)*len(past_song_lengths)*5 
-
 plt.hist(past_song_lengths, bins=bins)
 plt.plot(x_axis, best_fit_line)
+plt.xlabel('Lines per song')
+plt.ylabel('Counts')
+plt.savefig('../imgs/lines_per_song.pdf')
 plt.show()
 print(f'Mu: {mu:.2f}')
 print(f'Sigma: {sigma:.2f}')
