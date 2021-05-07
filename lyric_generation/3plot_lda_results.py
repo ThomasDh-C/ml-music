@@ -73,10 +73,32 @@ merged_dataset = lyrics_df.merge(reduced_views_df, on='fixed_songname', how='inn
 merged_dataset.loc[:,['song', 'categ', 'views']].to_csv('results/merged_song_views.csv')
 
 
-# %%
-import matplotlib.pyplot as plt
+# %% --- also import lda_tuning_results
+lda_tuning_results = pd.read_csv('results/lda_tuning_results.csv')
+
+# %% --- make some graphs ---
+coherence = lda_tuning_results['Coherence']
+labels = lda_tuning_results['Topics']
+plt.scatter(x=range(len(coherence)),y=coherence, c=labels, cmap='Dark2')
+cbar = plt.colorbar()
+cbar.set_label('number of categories', rotation=270, labelpad=10)
+plt.xlabel('Gensim LDA run')
+plt.ylabel('Coherence')
+plt.savefig('../imgs/coherence_lda.pdf')
+plt.show()
+
+# all songs success
+plt.hist(merged_dataset['views'], bins=100)
+plt.xlabel('Views on YouTube')
+plt.ylabel('Song count')
+plt.savefig('../imgs/views_by_song.pdf')
+plt.show()
+
+# topics vs success
 plt.scatter(merged_dataset['categ'], merged_dataset['views'])
-plt.xlabel('topic')
-plt.ylabel('views on youtube')
+plt.yscale('log') #https://stackoverflow.com/questions/18773662/python-scatter-plot-logarithmic-scale
+plt.xlabel('Topic')
+plt.ylabel('Views on YouTube')
+plt.savefig('../imgs/lda_views_by_topic.pdf')
 plt.show()
 # %%
